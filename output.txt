@@ -1,0 +1,6 @@
+CreditCard{id=1, cardNumber=9991, lastPay=2020-12-08 00:00:00.0}
+CreditCard{id=2, cardNumber=9992, lastPay=2020-12-17 00:00:00.0}
+CreditCard{id=3, cardNumber=9993, lastPay=2020-12-18 00:00:00.0}
+CreditCard{id=4, cardNumber=9994, lastPay=2020-12-27 00:00:00.0}
+CreditCard{id=5, cardNumber=9995, lastPay=2020-12-28 00:00:00.0}
+CreditCard{id=6, cardNumber=9996, lastPay=2021-01-02 00:00:00.0}
