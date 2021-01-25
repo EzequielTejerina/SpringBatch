@@ -1,13 +1,12 @@
 package com.example.batch.config;
 
-import com.example.batch.domain.AltaTitularBapro;
-import com.example.batch.domain.BajaIndividualBapro;
-import com.example.batch.domain.BaproLine;
-import com.example.batch.domain.CreditCard;
+import com.example.batch.domain.*;
+import com.example.batch.jobs.listeners.BaproJobExecutionListener;
 import com.example.batch.jobs.listeners.CreditCardJobExecutionListener;
+import com.example.batch.jobs.processor.BaproLineItemProcessor;
 import com.example.batch.jobs.processor.CreditCardItemProcessor;
+import com.example.batch.jobs.readers.BaproItemReader;
 import com.example.batch.jobs.readers.CreditCardItemReader;
-import com.example.batch.jobs.writers.CreditCardItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -27,43 +26,42 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
-//@Configuration
-//@EnableBatchProcessing
-public class JobBatchConfiguration {
+@Configuration
+@EnableBatchProcessing
+public class Job2BatchConfiguration {
 
     @Autowired
     public JobBuilderFactory jobBuilderFactory;
 
     @Autowired
     public StepBuilderFactory stepBuilderFactory;
-
     @Bean
-    public CreditCardItemReader reader() {
-        return new CreditCardItemReader();
+    public BaproItemReader reader() {
+        return new BaproItemReader();
     }
 
     @Bean
-    public CreditCardItemProcessor processor() {
-        return new CreditCardItemProcessor();
+    public BaproLineItemProcessor processor() {
+        return new BaproLineItemProcessor();
     }
 
     @Bean
     public FlatFileItemWriter itemWriter() {
-        return  new FlatFileItemWriterBuilder<CreditCard>()
-                .name("itemWriter")
-                .resource(new FileSystemResource("output.txt"))
+        return  new FlatFileItemWriterBuilder<BaproLineFormatted>()
+                .name("itemBaproWriter")
+                .resource(new FileSystemResource("output_bapro.txt"))
                 .lineAggregator(new PassThroughLineAggregator<>())
                 .build();
     }
 
     @Bean
-    public CreditCardJobExecutionListener jobExecutionListener() {
-        return new CreditCardJobExecutionListener();
+    public BaproJobExecutionListener jobExecutionListener() {
+        return new BaproJobExecutionListener();
     }
 
     @Bean
-    public Job job(Step step, CreditCardJobExecutionListener jobExecutionListener) {
-        Job job = jobBuilderFactory.get("job1")
+    public Job job(Step step, BaproJobExecutionListener jobExecutionListener) {
+        Job job = jobBuilderFactory.get("job2")
                 .listener(jobExecutionListener)
                 .flow(step)
                 .end()
@@ -72,17 +70,16 @@ public class JobBatchConfiguration {
     }
 
     @Bean
-    public Step step(CreditCardItemReader reader,
+    public Step step(BaproItemReader reader,
                      FlatFileItemWriter writer,
-                     CreditCardItemProcessor processor) {
+                     BaproLineItemProcessor processor) {
 
-        TaskletStep step = stepBuilderFactory.get("step1")
-                .<CreditCard, CreditCard>chunk(100)
+        TaskletStep step = stepBuilderFactory.get("step2")
+                .<BaproLine, BaproLineFormatted>chunk(100)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .build();
         return step;
     }
-
 }
